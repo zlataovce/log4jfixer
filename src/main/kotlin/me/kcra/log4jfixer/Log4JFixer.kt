@@ -29,8 +29,8 @@ fun main(args: Array<String>) {
         println("Could not find patchable file!")
         return
     }
-    val log4jJarExtract: File = unzip(getFromURL("https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar"), Files.createTempDirectory("log4j_unzip").toFile())
-    println("Pulling https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar...")
+    val log4jJarExtract: File = unzip(getFromURL("https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar"), Files.createTempDirectory("log4j_unzip").toFile())
+    println("Pulling https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar...")
     val patchableClasses: Map<String, File> = Files.walk(log4jJarExtract.toPath())
         .map { path -> path.toFile() }
         .filter { f -> f.name.endsWith(".class") }
