@@ -13,12 +13,6 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 fun main(args: Array<String>) {
-    val patchableFiles: List<String> = listOf(
-        "JmsAppender\$1.class", "JmsAppender\$Builder.class",
-        "JmsAppender.class", "JndiManager\$1.class",
-        "JndiManager\$JndiManagerFactory.class",
-        "JndiManager.class", "NetUtils.class"
-    )
     val options: Options = Options()
         .addRequiredOption("f", "file", true, "Selects the file to be patched")
     val helpFormatter = HelpFormatter()
@@ -35,16 +29,15 @@ fun main(args: Array<String>) {
         println("Could not find patchable file!")
         return
     }
-    val log4jJarExtract: File = Files.createTempDirectory("log4j_unzip").toFile()
+    val log4jJarExtract: File = unzip(getFromURL("https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar"), Files.createTempDirectory("log4j_unzip").toFile())
     println("Pulling https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar...")
-    unzip(getFromURL("https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar"), log4jJarExtract)
     val patchableClasses: Map<String, File> = Files.walk(log4jJarExtract.toPath())
         .map { path -> path.toFile() }
-        .filter { f -> patchableFiles.contains(f.name) }
+        .filter { f -> f.name.endsWith(".class") }
         .toList()
         .associateBy({ it.name }, { it })
 
-    Files.move(JarPatcher(file).patch(patchableClasses).toPath(), Path.of(System.getProperty("user.dir"), "patched.jar"), StandardCopyOption.REPLACE_EXISTING)
+    Files.move(JarPatcher(file).patch(patchableClasses, "log4j").toPath(), Path.of(System.getProperty("user.dir"), "patched.jar"), StandardCopyOption.REPLACE_EXISTING)
 }
 
 fun getFromURL(url: String): File {

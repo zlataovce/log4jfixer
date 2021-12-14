@@ -13,10 +13,15 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("commons-cli:commons-cli:1.5.0")
+    testImplementation(kotlin("test"))
 }
 
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "me.kcra.log4jfixer.Log4JFixerKt"
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

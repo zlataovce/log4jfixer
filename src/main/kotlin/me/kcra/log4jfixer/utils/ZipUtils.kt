@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-fun unzip(file: File, dest: File) {
+fun unzip(file: File, dest: File): File {
     ZipFile(file).use { zipFile ->
         val iter: Enumeration<out ZipEntry> = zipFile.entries()
         while (iter.hasMoreElements()) {
@@ -26,6 +26,7 @@ fun unzip(file: File, dest: File) {
             Files.copy(zipFile.getInputStream(entry), entryFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
     }
+    return dest
 }
 
 fun zip(sourceDir: Path, zipFile: File): File {
